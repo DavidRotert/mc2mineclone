@@ -14,56 +14,6 @@ from entities import e_convert
 
 logger = logging.getLogger('block')
 
-class MCMap:
-    """A MC map"""
-    def __init__(self, path):
-        self.world_path = os.path.join(path, "region")
-        self.chunk_pos = []
-        for ext in ["mca", "mcr"]:
-            filenames = [i for i in os.listdir(self.world_path)
-                         if i.endswith("."+ext)]
-            if len(filenames) > 0:
-                self.ext = ext
-                break
-        chunkCounta = 0
-        chunkCountb = 0
-        for filename in filenames:
-            chunkCounta += 1
-            s = filename.split(".")
-            cx, cz = int(s[1])*32, int(s[2])*32
-
-            with open(os.path.join(self.world_path, filename), "rb") as f:
-                for chkx in range(cx, cx+32):
-                    for chkz in range(cz, cz+32):
-                        offset = ((chkx%32) + 32*(chkz%32))*4
-                        f.seek(offset)
-                        if bytesToInt(f.read(3)) != 0:
-                            self.chunk_pos.append((chkx, chkz))
-                            chunkCountb += 1
-
-    def getChunk(self, chkx, chkz):
-        return MCChunk(chkx, chkz, self.world_path, self.ext)
-
-    def getBlocksIterator(self):
-        num_chunks = len(self.chunk_pos)
-        chunk_ix = 0
-        t0 = time.time()
-        for chkx, chkz in self.chunk_pos:
-            if chunk_ix%10 == 0:
-                if chunk_ix > 0:
-                    td = time.time() - t0                     # wall clock time spent
-                    tr = ((num_chunks * td) / chunk_ix) - td  # time remaining
-                    eta = time.strftime("%H:%M:%S", time.gmtime(tr))
-                else:
-                    eta = "??:??:??"
-                print('Processed %d / %d chunks, ETA %s h:m:s' % (chunk_ix, num_chunks, eta), end='\r')
-                sys.stdout.flush()
-            chunk_ix += 1
-            blocks = self.getChunk(chkx, chkz).blocks
-            for block in blocks:
-                yield block
-        print()
-
 class MCChunk:
     """A 16x16 column of nodes"""
     def __init__(self, chkx, chkz, path, ext):

@@ -5,6 +5,7 @@ import stat
 import sys
 import logging
 from block import *
+from MCMap import MCMap
 import content
 
 logging.basicConfig(level=logging.INFO)

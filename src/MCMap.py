@@ -63,7 +63,7 @@ class MCMap:
         currentTime = time.time()
         for x, z in self.chunk_positions:
             # Only calculate time for every Nth chunk
-            if chunk_index % 10 == 0:
+            if chunk_index % 16 * 16 == 0:
                 if chunk_index > 0:
                     timeDifference = time.time() - currentTime
                     timeRemaining = ((num_chunks * timeDifference) / chunk_index) - timeDifference  # time remaining

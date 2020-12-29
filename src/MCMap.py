@@ -9,6 +9,7 @@ from io import BytesIO
 import sqlite3
 
 import serialize
+from MCChunk import MCChunk
 from itemstack import *
 from tile_entities import te_convert
 from entities import e_convert
@@ -35,10 +36,7 @@ class MCMap:
                 self.ext = ext
                 break
 
-        chunkCountA = 0
-        chunkCountB = 0
         for filename in filenames:
-            chunkCountA += 1
             # Parse filename r.[region X].[region Z].mc(a/r)
             _r, regionXstr, regionZstr, _ext = filename.split(".")
 
@@ -53,30 +51,31 @@ class MCMap:
                                     (regionChunkZPos % MCMap.REGION_CHUNK_LENGTH)
                                 ) * 4
                         regionFile.seek(offset)
+                        # do not process chunk if empty
                         if serialize.bytesToInt(regionFile.read(3)) != 0:
                             self.chunk_positions.append((regionChunkXPos, regionChunkZPos))
-                            chunkCountB += 1
 
-    def getChunk(self, chkx, chkz):
-        return MCChunk(chkx, chkz, self.world_path, self.ext)
+    def getChunk(self, x, z):
+        return MCChunk(x, z, self.world_path, self.ext)
 
     def getBlocksIterator(self):
         num_chunks = len(self.chunk_positions)
-        chunk_ix = 0
-        t0 = time.time()
-        for chkx, chkz in self.chunk_positions:
-            if chunk_ix % 10 == 0:
-                if chunk_ix > 0:
-                    td = time.time() - t0                     # wall clock time spent
-                    tr = ((num_chunks * td) / chunk_ix) - td  # time remaining
-                    eta = time.strftime("%H:%M:%S", time.gmtime(tr))
+        chunk_index = 0
+        currentTime = time.time()
+        for x, z in self.chunk_positions:
+            # Only calculate time for every 10th chunk
+            if chunk_index % 16 == 0:
+                if chunk_index > 0:
+                    timeDifference = time.time() - currentTime
+                    timeRemaining = ((num_chunks * timeDifference) / chunk_index) - timeDifference  # time remaining
+                    timeRemainingStr = time.strftime("%H:%M:%S", time.gmtime(timeRemaining))
                 else:
-                    eta = "??:??:??"
+                    timeRemainingStr = "??:??:??"
                 print('Processed %d / %d chunks, ETA %s h:m:s' %
-                      (chunk_ix, num_chunks, eta), end='\r')
+                      (chunk_index, num_chunks, timeRemainingStr), end='\r')
                 sys.stdout.flush()
-            chunk_ix += 1
-            blocks = self.getChunk(chkx, chkz).blocks
+            chunk_index += 1
+            blocks = self.getChunk(x, z).blocks
             for block in blocks:
                 yield block
         print()

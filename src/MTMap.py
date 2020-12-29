@@ -1,19 +1,7 @@
-import os
-import sys
-import zlib
-import nbt
-import random
-import time
-import logging
-from io import BytesIO
 import sqlite3
-from serialize import *
-from itemstack import *
-from tile_entities import te_convert
-from entities import e_convert
-from MTBlock import MTBlock
+import os
 
-logger = logging.getLogger('block')
+from MTBlock import MTBlock
 
 class MTMap:
     def __init__(self, path):
@@ -54,20 +42,3 @@ class MTMap:
 
         conn.commit()
         conn.close()
-
-
-if __name__ == "__main__":
-    # Tests
-    from random import randrange
-    t = [randrange(256) for i in range(2048*8)]
-    assert(MCBlock.extract_slice(MCBlock.expand_half_bytes(t), 0)
-          == MCBlock.extract_slice_half_bytes(t, 0))
-
-    from time import time
-    t0 = time()
-    s1 = MCBlock.extract_slice(MCBlock.expand_half_bytes(t), 1)
-    print(time()-t0)
-    t0 = time()
-    s2 = MCBlock.extract_slice_half_bytes(t, 1)
-    print(time()-t0)
-    assert(s1 == s2)

@@ -1,9 +1,9 @@
-def writeU8(os, u8):
-    os.write(bytes((u8 & 0xff,)))
+def writeU8(out, u8):
+    out.write(bytes((u8 & 0xff,)))
 
-def writeU16(os, u16):
-    os.write(bytes(((u16 >> 8) & 0xff,)))
-    os.write(bytes((u16 & 0xff,)))
+def writeU16(out, u16):
+    out.write(bytes(((u16 >> 8) & 0xff,)))
+    out.write(bytes((u16 & 0xff,)))
 
 def writeU32(os, u32):
     os.write(bytes(((u32 >> 24) & 0xff,)))
@@ -11,15 +11,15 @@ def writeU32(os, u32):
     os.write(bytes(((u32 >> 8) & 0xff,)))
     os.write(bytes((u32 & 0xff,)))
 
-def writeString(os, s):
+def writeString(out, s):
     b = bytes(s, "utf-8")
-    writeU16(os, len(b))
-    os.write(b)
+    writeU16(out, len(b))
+    out.write(b)
 
-def writeLongString(os, s):
+def writeLongString(out, s):
     b = bytes(s, "utf-8")
-    writeU32(os, len(b))
-    os.write(b)
+    writeU32(out, len(b))
+    out.write(b)
 
 def bytesToInt(b):
     s = 0

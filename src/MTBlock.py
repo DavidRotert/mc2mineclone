@@ -10,16 +10,16 @@ from entities import e_convert
 class MTBlock:
     def __init__(self, name_id_mapping):
         self.name_id_mapping = name_id_mapping
-        self.content = [0]*4096
-        self.mcblockidentifier = ['']*4096
-        self.param1 = [0]*4096
-        self.param2 = [0]*4096
+        self.content = [0] * 4096
+        self.mcblockidentifier = [''] * 4096
+        self.param1 = [0] * 4096
+        self.param2 = [0] * 4096
         self.metadata = {}
         self.pos = (0, 0, 0)
 
     def fromMCBlock(self, mcblock, conversion_table):
         self.timers = []
-        self.pos = (mcblock.pos[0], mcblock.pos[1]-4, mcblock.pos[2])
+        self.pos = (mcblock.pos[0], mcblock.pos[1] -4, mcblock.pos[2])
         content = self.content
         mcblockidentifier = self.mcblockidentifier
         param1 = self.param1
@@ -32,7 +32,7 @@ class MTBlock:
         # now load all the nodes in the 16x16x16 (=4096) block
         for i in range(4096):
             content[i], param2[i] = conversion_table[blocks[i]][data[i]]
-            param1[i] = max(blocklight[i], skylight[i])|(blocklight[i]<<4)
+            param1[i] = max(blocklight[i], skylight[i]) | (blocklight[i] << 4)
             mcblockidentifier[i] = str(blocks[i]) + ':' + str(data[i])
 
             def isdoor(b):
@@ -46,13 +46,13 @@ class MTBlock:
                 pass
             # pressure plates - append mesecons node timer
             elif blocks[i] == 70 or blocks[i] == 72:
-                self.timers.append(((i&0xf)|((i>>4)&0xf)<<8|((i>>8)&0xf)<<4, 100, 0))
+                self.timers.append(((i & 0xf) | ((i >> 4) & 0xf) << 8 |((i >> 8) & 0xf) << 4, 100, 0))
             # rotate lily pads randomly
             elif blocks[i] == 111:
-                param2[i] = random.randint(0,3)
+                param2[i] = random.randint(0, 3)
             # grass of varying length randomly
             elif blocks[i] == 31 and data[i] == 1:
-                content[i], param2[i] = conversion_table[931][random.randint(0,4)]
+                content[i], param2[i] = conversion_table[931][random.randint(0, 4)]
             # fix doors based on top/bottom bits
             elif isdoor(blocks[i]) and data[i] < 8:  # bottom part
                 above = i + 256
@@ -81,7 +81,7 @@ class MTBlock:
                         alt = 976
                     content[i], param2[i] = conversion_table[alt][d_face|d_open|(d_right<<3)]
                     if d_right == 1:
-                        self.metadata[(i & 0xf, (i>>8) & 0xf, (i>>4) & 0xf)] = ({ "right": "1" }, {})
+                        self.metadata[(i & 0xf, (i >> 8) & 0xf, (i >> 4) & 0xf)] = ({ "right": "1" }, {})
             elif isdoor(blocks[i]) and data[i] >= 8:  # top part
                 below = i - 256
                 if (below < 0):
@@ -145,8 +145,8 @@ class MTBlock:
             block, p2, meta = f(e)
 
     def save(self):
-        os = BytesIO()
-        serialize.writeU8(os, 25) # Version
+        out = BytesIO()
+        serialize.writeU8(out, 25) # Version
 
         #flags
         flags = 0x00
@@ -155,10 +155,10 @@ class MTBlock:
         flags |= 0x02           #day_night_differs
         flags |= 0x04           #lighting_expired
         flags |= 0x08           #generated
-        serialize.writeU8(os, flags)
+        serialize.writeU8(out, flags)
 
-        serialize.writeU8(os, 2) # content_width
-        serialize.writeU8(os, 2) # params_width
+        serialize.writeU8(out, 2) # content_width
+        serialize.writeU8(out, 2) # params_width
 
         cbuffer = BytesIO()
         # Bulk node data
@@ -180,8 +180,8 @@ class MTBlock:
                         rev_nimap.append(c)
                         first_free_content += 1
                     k += 1
-                k += (256-16)
-            k += (16-16*256)
+                k += (256 - 16)
+            k += (16 - (16 * 256))
         param1 = self.param1
         k = 0
         for z in range(16):
@@ -189,8 +189,8 @@ class MTBlock:
                 for x in range(16):
                     serialize.writeU8(cbuffer, param1[k])
                     k += 1
-                k += (256-16)
-            k += (16-16*256)
+                k += (256 - 16)
+            k += (16 - (16 * 256))
         param2 = self.param2
         k = 0
         for z in range(16):
@@ -198,9 +198,9 @@ class MTBlock:
                 for x in range(16):
                     serialize.writeU8(cbuffer, param2[k])
                     k += 1
-                k += (256-16)
-            k += (16-16*256)
-        os.write(zlib.compress(cbuffer.getvalue()))
+                k += (256 - 16)
+            k += (16 - (16 * 256))
+        out.write(zlib.compress(cbuffer.getvalue()))
 
         # Nodemeta
         meta = self.metadata
@@ -209,37 +209,37 @@ class MTBlock:
         serialize.writeU8(cbuffer, 1) # Version
         serialize.writeU16(cbuffer, len(meta))
         for pos, data in meta.items():
-            serialize.writeU16(cbuffer, (pos[2]<<8)|(pos[1]<<4)|pos[0])
+            serialize.writeU16(cbuffer, (pos[2] << 8) | (pos[1] << 4) | pos[0])
             serialize.writeU32(cbuffer, len(data[0]))
             for name, val in data[0].items():
                 serialize.writeString(cbuffer, name)
                 serialize.writeLongString(cbuffer, str(val))
             serialize_inv(cbuffer, data[1])
-        os.write(zlib.compress(cbuffer.getvalue()))
+        out.write(zlib.compress(cbuffer.getvalue()))
 
         # Static objects
-        serialize.writeU8(os, 0) # Version
-        serialize.writeU16(os, 0) # Number of objects
+        serialize.writeU8(out, 0) # Version
+        serialize.writeU16(out, 0) # Number of objects
 
         # Timestamp
-        serialize.writeU32(os, 0xffffffff) # BLOCK_TIMESTAMP_UNDEFINED
+        serialize.writeU32(out, 0xffffffff) # BLOCK_TIMESTAMP_UNDEFINED
 
         # Name-ID mapping
-        serialize.writeU8(os, 0) # Version
-        serialize.writeU16(os, len(rev_nimap))
+        serialize.writeU8(out, 0) # Version
+        serialize.writeU16(out, len(rev_nimap))
         for i in range(len(rev_nimap)):
-            serialize.writeU16(os, i)
-            serialize.writeString(os, self.name_id_mapping[rev_nimap[i]])
+            serialize.writeU16(out, i)
+            serialize.writeString(out, self.name_id_mapping[rev_nimap[i]])
 
         # Node timer
-        serialize.writeU8(os, 2+4+4) # Timer data len
-        serialize.writeU16(os, len(self.timers)) # Number of timers
+        serialize.writeU8(out, 2+4+4) # Timer data len
+        serialize.writeU16(out, len(self.timers)) # Number of timers
         if len(self.timers) > 0:
             pass
             #logger.info('wrote ' + str(len(self.timers)) + ' node timers')
         for i in range(len(self.timers)):
-            serialize.writeU16(os, self.timers[i][0])
-            serialize.writeU32(os, self.timers[i][1])
-            serialize.writeU32(os, self.timers[i][2])
+            serialize.writeU16(out, self.timers[i][0])
+            serialize.writeU32(out, self.timers[i][1])
+            serialize.writeU32(out, self.timers[i][2])
 
-        return os.getvalue()
+        return out.getvalue()

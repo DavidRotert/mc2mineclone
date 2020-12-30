@@ -1,14 +1,36 @@
 # mcimport
+# a fork of the original 'mcimport' for the MineClone2 subgame.
 
-This mod converts a minecraft world into minetest.
+This fork of mcimport converts a Minecraft world into Minetest; specifically a MineClone2 subgame.
 
+## Notes
+
+Compatible with Minecraft Worlds up to & including v1.12.2
+
+This is a WIP; so the conversion list is continually being refined for more accurate conversions.
+
+##### Coordinate Conversion from Minecraft to Minetest:
+```
+X = Approximately the same in both.
+Y = Approximately -64 nodes in MCL2
+Z = The number is approximately inverted.
+
+Example:
+Minecraft: -1457,4,-1632
+Minetest-MineClone2: -1439,-60,1647
+```
+
+## MineClone 2 Info: 
+* [Wuzzy's MineClone2 Sub-game forum link](https://forum.minetest.net/viewtopic.php?f=50&t=16407)
+* [Wuzzy's MineClone2 Repo](http://repo.or.cz/MineClone/MineClone2.git)
+
+--------------------------------------------------
 The process is offline. Minecraft should not be running on the world
 that is to be converted. The output should be an empty folder, and
 no map.sqlite should be present in the empty folder.
 
-The output is a world folder that is playable, permitted that the
-required minetest mods are installed. If mods are missing, you will
-encounter "Unknown" blocks in the minetest world.
+The output is a world folder that is playable, permitted that you're using the MineClone2 sub-game.
+This is a WIP, so you may still encounter "Unknown" blocks in the Minetest world.
 
 This mcimport fork was created to improve on the existing mcimport
 project, with one significant change: This form aims to create
@@ -23,20 +45,14 @@ Also, the assumption is that converted maps are for multiplayer
 use, and that the most important motivation for using this
 converter is to *preserve* previously custom built objects
 and buildings, but *not* meant to preserve the gameplay style
-and feel of minecraft. As such, there are numerous blocks that
-are *not* converted 1:1 from MC to MT. A good example is Lapis
-Lazuli. LL ore will be converted to plain stone, and LL blocks
-into blue wool, simply because there is no reasonable equivalent
-in MT that is an actually useful block and not something created
-purely to copy MC. This project also aims to never convert
+and feel of minecraft. This project aims to never convert
 blocks to "Unknown" nodes and strives to leave a playable are
 that is friendly for users performing a one-time conversion.
 
 - some flowers are approximations
 - double plants may end up being single node blocks
-- wood types are similarly not an exact copy
-- until fixed, beds, doors, fences, walls are likely broken
-- signs convert, but MT can't rotate them in 30 degree angles
+- until fixed, fences, walls & other items are likely broken
+
 
 There are a large number of things that are just never going to
 be convertable, and so the following will likely never work and
@@ -44,8 +60,7 @@ are therefore converted to air blocks. Entities are readily
 spawned by several mob mods in minetest, so conversion is likely
 not critical to users, and left out.
 
-- crafting table
-- hoppers, dispensers, droppers
+
 - entities
 
 # Usage:
@@ -58,7 +73,7 @@ settings.
 
 # License:
 
-Copyright (C) 2016 - Nore, dgm555, sofar and others
+Copyright (C) 2017 - Nore, dgm555, sofar, MysticTempest, and others
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

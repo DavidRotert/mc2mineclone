@@ -34,21 +34,13 @@ fi
 
 zenity --info --width=800 --title="Conversion in progress" --text="The conversion is now running and make take a *very* long time to finish. Do not be alarmed by output lines that show \"Unknown Minecraft Block\" messages, this is normal and can usually be ignored without issues. You can safely close this window." &
 
-python3 mcimport.py "$IN" "${HOME}/.minetest/worlds/$OUT"
+pypy3 mcimport.py "$IN" "${HOME}/.minetest/worlds/$OUT"
 
 if [ $? == 0 ]; then
-	if ! zenity --width=800 --question --title="Download required mods?" --text="The world was succesfully converted. Do you want me to download and install all the required mods now? This should be done for each converted world."; then
-		exit 0
-	fi
-	cd "${HOME}/.minetest/worlds/$OUT"
-	(
-		bash get-mods.sh
-		echo "====================="
-		echo "Finished! You can now close this window!"
-	) | zenity --text-info --width=800 --height=600 --title='Downloading required mods.' --text='Downloading...'
+	zenity --width=800 --info --text "Conversion finished! Your world should now be playable in Minetest."
 else
 	zenity --info --width=800 --text "Conversion didn't finish normally, the resulting world may not be playable."
 	exit 1
 fi
 
-zenity --width=800 --info --text "Conversion finished! Your world should now be playable in Minetest."
+

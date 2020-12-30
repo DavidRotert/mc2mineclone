@@ -5,6 +5,7 @@ import stat
 import sys
 import logging
 from block import *
+from MCMap import MCMap
 import content
 
 logging.basicConfig(level=logging.INFO)
@@ -27,7 +28,7 @@ if os.path.exists(sys.argv[2] + "map.sqlite"):
 if not os.path.exists(sys.argv[2] + "/world.mt"):
     with open(sys.argv[2] + "/world.mt", "w") as wo:
         wo.write("backend = sqlite3\n")
-        wo.write("gameid = minetest\n")
+        wo.write("gameid = MineClone2\n")
 
 if not os.path.exists(sys.argv[2] + "/worldmods"):
     os.makedirs(sys.argv[2]+"/worldmods")
@@ -50,6 +51,7 @@ if not os.path.exists(sys.argv[2]+"/worldmods/mcimport/init.lua"):
         sn.write("        vm:update_map()\n")
         sn.write("end)\n\n")
 
+<<<<<<< HEAD:mcimport.py
 if not os.path.exists(sys.argv[2]+"/get-mods.sh"):
     path = sys.argv[2]+"/get-mods.sh"
     with open(path, "w") as md:
@@ -98,6 +100,8 @@ done
 ''')
     st = os.stat(path)
     os.chmod(path, st.st_mode | stat.S_IXUSR)
+=======
+>>>>>>> mcimport_for_MineClone2:src/mcimport.py
 
 mcmap = MCMap(sys.argv[1])
 mtmap = MTMap(sys.argv[2])
@@ -107,4 +111,5 @@ mtmap.fromMCMap(mcmap, nimap, ct)
 mtmap.save()
 
 print("Conversion finished!\n")
-print("Run \"sh get-mods.sh\" in the new world folder to automatically download all required mods.")
+print("Please enjoy your new MineClone2 world!")
+

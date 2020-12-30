@@ -144,7 +144,7 @@ class MTBlock:
             f = e_convert.get(id.lower(), lambda arg: (None, None, None)) # Do nothing if not found
             block, p2, meta = f(e)
 
-    def save(self):
+    def getBlockData(self):
         out = BytesIO()
         serialize.writeU8(out, 25) # Version
 

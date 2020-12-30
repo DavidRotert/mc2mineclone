@@ -34,7 +34,7 @@ fi
 
 zenity --info --width=800 --title="Conversion in progress" --text="The conversion is now running and make take a *very* long time to finish. Do not be alarmed by output lines that show \"Unknown Minecraft Block\" messages, this is normal and can usually be ignored without issues. You can safely close this window." &
 
-python3 mcimport.py "$IN" "${HOME}/.minetest/worlds/$OUT"
+pypy3 mcimport.py "$IN" "${HOME}/.minetest/worlds/$OUT"
 
 if [ $? == 0 ]; then
 	zenity --width=800 --info --text "Conversion finished! Your world should now be playable in Minetest."

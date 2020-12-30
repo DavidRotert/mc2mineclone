@@ -50,24 +50,24 @@ class MTMap:
             cur.execute("INSERT INTO blocks VALUES (?,?)",
 #                        (self.getBlockAsInteger((-block.pos[0],block.pos[1],block.pos[2])),
                         (self.getBlockAsInteger((-block.pos[0],block.pos[1],-block.pos[2])),
-                        block.save()))
+                        block.getBlockData()))
 
         conn.commit()
         conn.close()
 
 
-if __name__ == "__main__":
-    # Tests
-    from random import randrange
-    t = [randrange(256) for i in range(2048*8)]
-    assert(MCBlock.extract_slice(MCBlock.expand_half_bytes(t), 0)
-          == MCBlock.extract_slice_half_bytes(t, 0))
+# if __name__ == "__main__":
+#     # Tests
+#     from random import randrange
+#     t = [randrange(256) for i in range(2048*8)]
+#     assert(MCBlock.extract_slice(MCBlock.expand_half_bytes(t), 0)
+#           == MCBlock.extract_slice_half_bytes(t, 0))
 
-    from time import time
-    t0 = time()
-    s1 = MCBlock.extract_slice(MCBlock.expand_half_bytes(t), 1)
-    print(time()-t0)
-    t0 = time()
-    s2 = MCBlock.extract_slice_half_bytes(t, 1)
-    print(time()-t0)
-    assert(s1 == s2)
+#     from time import time
+#     t0 = time()
+#     s1 = MCBlock.extract_slice(MCBlock.expand_half_bytes(t), 1)
+#     print(time()-t0)
+#     t0 = time()
+#     s2 = MCBlock.extract_slice_half_bytes(t, 1)
+#     print(time()-t0)
+#     assert(s1 == s2)

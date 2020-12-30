@@ -32,12 +32,11 @@ class MTMap:
         num_saved = 0
         for block in self.blocks:
             if num_saved % 100 == 0:
-                #print("Saved", num_saved, "blocks")
                 conn.commit()
             num_saved += 1
             cursor.execute("INSERT INTO blocks VALUES (?,?)",
                         (self.getBlockAsInteger((-block.pos[0],block.pos[1],-block.pos[2])),
-                        block.save()))
+                        block.getBlockData()))
 
         conn.commit()
         conn.close()
